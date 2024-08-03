@@ -8,7 +8,8 @@ export type CustomElement =
   | BlockQuoteElement
   | ListElement
   | AlignElement
-  | LinkElement;
+  | LinkElement
+  | ImageElement
 
 export interface ParagraphElement {
   type: 'paragraph';
@@ -47,6 +48,14 @@ export interface LinkElement {
   children: CustomText[];
 }
 
+export interface ImageElement {
+  type: 'image';
+  url: string;
+  alt?: string;
+  align?: 'left' | 'center' | 'right' | 'justify';
+  children: EmptyText[];
+}
+
 export type CustomText = {
   text: string;
   bold?: boolean;
@@ -58,12 +67,16 @@ export type CustomText = {
   size?: string;
 };
 
+export type EmptyText = {
+  text: '';
+};
+
 export type CustomEditor = BaseEditor & ReactEditor & HistoryEditor;
 
 declare module 'slate' {
   interface CustomTypes {
     Editor: CustomEditor;
     Element: CustomElement;
-    Text: CustomText;
+    Text: CustomText | EmptyText
   }
 }

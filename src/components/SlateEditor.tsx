@@ -1,31 +1,36 @@
-import React, { useCallback, useMemo } from 'react';
-import isHotkey from 'is-hotkey';
-import { Editable, withReact, useSlate, Slate } from 'slate-react';
+import React, { useCallback, useMemo } from "react";
+import isHotkey from "is-hotkey";
+import { Editable, withReact, useSlate, Slate } from "slate-react";
 import {
   Editor,
   Transforms,
   createEditor,
   Element as SlateElement,
-} from 'slate';
-import { withHistory } from 'slate-history';
+} from "slate";
+import { withHistory } from "slate-history";
 
-import { Button, Icon, Toolbar } from './components';
+import { Button, Icon, Toolbar } from "./components";
 
-import { CustomEditor, CustomText, CustomElement } from './slate-types';
-import { LinkBtn } from './LinkBtn';
-import Link from 'next/link';
-import ColorPicker from './ColorPicker';
-import FontPicker from './FontPicker';
+import {
+  CustomEditor,
+  CustomText,
+  CustomElement,
+  ImageElement,
+} from "./slate-types";
+import { LinkBtn } from "./LinkBtn";
+import Link from "next/link";
+import ColorPicker from "./ColorPicker";
+import FontPicker from "./FontPicker";
 
 const HOTKEYS: Record<string, string> = {
-  'mod+b': 'bold',
-  'mod+i': 'italic',
-  'mod+u': 'underline',
-  'mod+`': 'code',
+  "mod+b": "bold",
+  "mod+i": "italic",
+  "mod+u": "underline",
+  "mod+`": "code",
 };
 
-const LIST_TYPES = ['numbered-list', 'bulleted-list'] as const;
-const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'] as const;
+const LIST_TYPES = ["numbered-list", "bulleted-list"] as const;
+const TEXT_ALIGN_TYPES = ["left", "center", "right", "justify"] as const;
 
 const RichTextExample: React.FC = () => {
   const renderElement = useCallback(
@@ -51,77 +56,30 @@ const RichTextExample: React.FC = () => {
   );
 
   return (
-    <Slate
-      editor={editor}
-      initialValue={initialValue}
-    >
+    <Slate editor={editor} initialValue={initialValue}>
       <Toolbar>
-        <MarkButton
-          format='bold'
-          icon='format_bold'
-        />
-        <MarkButton
-          format='italic'
-          icon='format_italic'
-        />
-        <MarkButton
-          format='underline'
-          icon='format_underlined'
-        />
-        <MarkButton
-          format='code'
-          icon='code'
-        />
-        <ColorPicker
-          format='color'
-          icon='format_color_text'
-        />
-        <FontPicker
-          format='size'
-          icon='format_size'
-        />
-        <BlockButton
-          format='heading-one'
-          icon='looks_one'
-        />
-        <BlockButton
-          format='heading-two'
-          icon='looks_two'
-        />
-        <BlockButton
-          format='block-quote'
-          icon='format_quote'
-        />
-        <BlockButton
-          format='numbered-list'
-          icon='format_list_numbered'
-        />
-        <BlockButton
-          format='bulleted-list'
-          icon='format_list_bulleted'
-        />
-        <BlockButton
-          format='left'
-          icon='format_align_left'
-        />
-        <BlockButton
-          format='center'
-          icon='format_align_center'
-        />
-        <BlockButton
-          format='right'
-          icon='format_align_right'
-        />
-        <BlockButton
-          format='justify'
-          icon='format_align_justify'
-        />
+        <MarkButton format="bold" icon="format_bold" />
+        <MarkButton format="italic" icon="format_italic" />
+        <MarkButton format="underline" icon="format_underlined" />
+        <MarkButton format="code" icon="code" />
+        <ColorPicker format="color" icon="format_color_text" />
+        <FontPicker format="size" icon="format_size" />
+        <BlockButton format="heading-one" icon="looks_one" />
+        <BlockButton format="heading-two" icon="looks_two" />
+        <BlockButton format="block-quote" icon="format_quote" />
+        <BlockButton format="numbered-list" icon="format_list_numbered" />
+        <BlockButton format="bulleted-list" icon="format_list_bulleted" />
+        <BlockButton format="left" icon="format_align_left" />
+        <BlockButton format="center" icon="format_align_center" />
+        <BlockButton format="right" icon="format_align_right" />
+        <BlockButton format="justify" icon="format_align_justify" />
         <LinkBtn />
+        <ImageButton />
       </Toolbar>
       <Editable
         renderElement={renderElement}
         renderLeaf={renderLeaf}
-        placeholder='Enter some rich text…'
+        placeholder="Enter some rich text…"
         spellCheck
         autoFocus
         onKeyDown={(event) => {
@@ -142,12 +100,12 @@ const toggleBlock = (editor: CustomEditor, format: string) => {
   const isActive = isBlockActive(
     editor,
     format,
-    TEXT_ALIGN_TYPES.includes(format as 'left' | 'center' | 'right' | 'justify')
-      ? 'align'
-      : 'type'
+    TEXT_ALIGN_TYPES.includes(format as "left" | "center" | "right" | "justify")
+      ? "align"
+      : "type"
   );
   const isList = LIST_TYPES.includes(
-    format as 'numbered-list' | 'bulleted-list'
+    format as "numbered-list" | "bulleted-list"
   );
 
   Transforms.unwrapNodes(editor, {
@@ -155,23 +113,23 @@ const toggleBlock = (editor: CustomEditor, format: string) => {
       !Editor.isEditor(n) &&
       SlateElement.isElement(n) &&
       LIST_TYPES.includes(
-        (n as CustomElement).type as 'numbered-list' | 'bulleted-list'
+        (n as CustomElement).type as "numbered-list" | "bulleted-list"
       ),
     split: true,
   });
 
   let newProperties: Partial<CustomElement>;
   if (
-    TEXT_ALIGN_TYPES.includes(format as 'left' | 'center' | 'right' | 'justify')
+    TEXT_ALIGN_TYPES.includes(format as "left" | "center" | "right" | "justify")
   ) {
     newProperties = {
       align: isActive
         ? undefined
-        : (format as 'left' | 'center' | 'right' | 'justify'),
+        : (format as "left" | "center" | "right" | "justify"),
     };
   } else {
     newProperties = {
-      type: isActive ? 'paragraph' : (format as CustomElement['type']),
+      type: isActive ? "paragraph" : (format as CustomElement["type"]),
     };
   }
 
@@ -179,7 +137,7 @@ const toggleBlock = (editor: CustomEditor, format: string) => {
 
   if (!isActive && isList) {
     const block: CustomElement = {
-      type: format as 'numbered-list' | 'bulleted-list',
+      type: format as "numbered-list" | "bulleted-list",
       children: [],
     };
     Transforms.wrapNodes(editor, block);
@@ -199,7 +157,7 @@ const toggleMark = (editor: CustomEditor, format: string) => {
 const isBlockActive = (
   editor: CustomEditor,
   format: string,
-  blockType: 'type' | 'align' = 'type'
+  blockType: "type" | "align" = "type"
 ) => {
   const { selection } = editor;
   if (!selection) return false;
@@ -229,82 +187,75 @@ const Element: React.FC<{
 }> = ({ attributes, children, element }) => {
   const style = { textAlign: element.align };
   switch (element.type) {
-    case 'block-quote':
+    case "block-quote":
       return (
         <blockquote
-          className='border-l-4 border-gray-300 pl-4 italic text-gray-700'
+          className="border-l-4 border-gray-300 pl-4 italic text-gray-700"
           style={style}
           {...attributes}
         >
           {children}
         </blockquote>
       );
-    case 'bulleted-list':
+    case "bulleted-list":
       return (
-        <ul
-          style={style}
-          {...attributes}
-        >
+        <ul style={style} {...attributes}>
           {children}
         </ul>
       );
-    case 'heading-one':
+    case "heading-one":
       return (
-        <h1
-          className='text-4xl font-bold'
-          style={style}
-          {...attributes}
-        >
+        <h1 className="text-4xl font-bold" style={style} {...attributes}>
           {children}
         </h1>
       );
-    case 'heading-two':
+    case "heading-two":
       return (
-        <h2
-          className='text-3xl font-semibold'
-          style={style}
-          {...attributes}
-        >
+        <h2 className="text-3xl font-semibold" style={style} {...attributes}>
           {children}
         </h2>
       );
-    case 'list-item':
+    case "list-item":
       return (
-        <li
-          style={style}
-          {...attributes}
-        >
+        <li style={style} {...attributes}>
           {children}
         </li>
       );
-    case 'numbered-list':
+    case "numbered-list":
       return (
-        <ol
-          style={style}
-          {...attributes}
-        >
+        <ol style={style} {...attributes}>
           {children}
         </ol>
       );
-    case 'link':
+    case "link":
       return (
         <Link
-          className='cursor-pointer'
+          className="cursor-pointer"
           href={element.url}
           style={style}
-          target='_blank'
-          rel='noreferrer'
+          target="_blank"
+          rel="noreferrer"
           {...attributes}
         >
           {children}
         </Link>
       );
+    case "image":
+      return (
+        <div {...attributes}>
+          <div contentEditable={false}>
+            <img
+              src={element.url}
+              alt={element.alt}
+              style={{ maxWidth: "100%" }}
+            />
+          </div>
+          {children}
+        </div>
+      );
     default:
       return (
-        <p
-          style={style}
-          {...attributes}
-        >
+        <p style={style} {...attributes}>
           {children}
         </p>
       );
@@ -333,10 +284,7 @@ const Leaf: React.FC<{
   }
 
   return (
-    <span
-      {...attributes}
-      style={{ color: leaf.color, fontSize: leaf.size }}
-    >
+    <span {...attributes} style={{ color: leaf.color, fontSize: leaf.size }}>
       {children}
     </span>
   );
@@ -353,10 +301,10 @@ const BlockButton: React.FC<{ format: string; icon: string }> = ({
         editor,
         format,
         TEXT_ALIGN_TYPES.includes(
-          format as 'left' | 'center' | 'right' | 'justify'
+          format as "left" | "center" | "right" | "justify"
         )
-          ? 'align'
-          : 'type'
+          ? "align"
+          : "type"
       )}
       onMouseDown={(event: React.MouseEvent) => {
         event.preventDefault();
@@ -386,47 +334,76 @@ const MarkButton: React.FC<{ format: string; icon: string }> = ({
   );
 };
 
+const ImageButton: React.FC = () => {
+  const editor = useSlate();
+
+  const insertImage = (url: string, alt: string) => {
+    const text = { text: "" } as { text: "" };
+    const image: ImageElement = { type: "image", url, alt, children: [text] };
+    Transforms.insertNodes(editor, image);
+  };
+
+  const handleImageInsert = () => {
+    const url = prompt("Enter the URL of the image:");
+    const alt = prompt("Enter the alt text for the image:");
+    if (url) {
+      insertImage(url, alt || "");
+    }
+  };
+
+  return (
+    <Button
+      onMouseDown={(event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        handleImageInsert();
+      }}
+    >
+      <Icon>image</Icon>
+    </Button>
+  );
+};
+
 const initialValue: CustomElement[] = [
   {
-    type: 'paragraph',
+    type: "paragraph",
     children: [
-      { text: 'This is editable ' },
-      { text: 'rich', bold: true },
-      { text: ' text, ' },
-      { text: 'much', italic: true },
-      { text: ' better than a ' },
-      { text: '<textarea>', code: true },
-      { text: '!' },
+      { text: "This is editable " },
+      { text: "rich", bold: true },
+      { text: " text, " },
+      { text: "much", italic: true },
+      { text: " better than a " },
+      { text: "<textarea>", code: true },
+      { text: "!" },
     ],
   },
   {
-    type: 'paragraph',
+    type: "paragraph",
     children: [
       {
         text: "Since it's rich text, you can do things like turn a selection of text ",
       },
-      { text: 'bold', bold: true },
+      { text: "bold", bold: true },
       {
-        text: ', or add a semantically rendered block quote in the middle of the page, like this:',
+        text: ", or add a semantically rendered block quote in the middle of the page, like this:",
       },
     ],
   },
   {
-    type: 'block-quote',
-    children: [{ text: 'A wise quote.' }],
+    type: "block-quote",
+    children: [{ text: "A wise quote." }],
   },
   {
-    type: 'heading-one',
-    children: [{ text: 'Heading One' }],
+    type: "heading-one",
+    children: [{ text: "Heading One" }],
   },
   {
-    type: 'heading-two',
-    children: [{ text: 'Heading Two' }],
+    type: "heading-two",
+    children: [{ text: "Heading Two" }],
   },
   {
-    type: 'paragraph',
-    align: 'center',
-    children: [{ text: 'Try it out for yourself!' }],
+    type: "paragraph",
+    align: "center",
+    children: [{ text: "Try it out for yourself!" }],
   },
 ];
 
