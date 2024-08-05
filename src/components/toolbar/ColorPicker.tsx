@@ -1,13 +1,19 @@
 import { useState } from 'react';
 import { Editor } from 'slate';
 import { useSlateStatic } from 'slate-react';
-import { Button, Icon } from './components';
-import { CustomEditor } from './slate-types';
-import { isMarkActive } from './SlateEditor';
+import { Button, Icon } from '../components';
+import { CustomEditor } from '../../lib/slate-types';
+import { isMarkActive } from './MarkButton';
 
 const COLORS = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'black'];
 
-export default function ColorPicker({ format, icon }: { format: string; icon: string }) {
+export default function ColorPicker({
+  format,
+  icon,
+}: {
+  format: string;
+  icon: string;
+}) {
   const editor = useSlateStatic();
   const [showMenu, setShowMenu] = useState<boolean>(false);
 

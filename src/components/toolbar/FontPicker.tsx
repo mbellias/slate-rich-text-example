@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import { useSlateStatic } from 'slate-react';
-import { Button, Icon } from './components';
-import { CustomEditor } from './slate-types';
-import { isMarkActive } from './SlateEditor';
+import { Button, Icon } from '../components';
+import { CustomEditor } from '../../lib/slate-types';
+import { isMarkActive } from './MarkButton';
 import { Editor } from 'slate';
 
 const FONT_SIZES = [

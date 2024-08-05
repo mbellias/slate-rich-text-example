@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
 import { Transforms, Editor, Element as SlateElement, Text } from 'slate';
-import { CustomEditor, CustomElement } from './slate-types';
-import { Button, Icon } from './components';
+import { CustomEditor, CustomElement } from '../../lib/slate-types';
+import { Button, Icon } from '../components';
 
 const isLinkActive = (editor: CustomEditor) => {
   const [link] = Editor.nodes(editor, {
